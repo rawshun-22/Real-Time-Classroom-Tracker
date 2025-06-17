@@ -1,0 +1,732 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ClassroomTracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2rem;
+            height: 2rem;
+            background: #dc2626;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #374151;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            background: transparent;
+            color: #374151;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        /* Overview Cards */
+        .overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem 0.5rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .card-content {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Classroom Management */
+        .classroom-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .classroom-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .classroom-info h3 {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .classroom-info p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.occupied {
+            background: #dc2626;
+            color: white;
+        }
+
+        .status-badge.vacant {
+            background: #16a34a;
+            color: white;
+        }
+
+        .classroom-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input, .select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .classroom-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-danger {
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .btn-danger:hover {
+            background: #fef2f2;
+        }
+
+        /* Activity Log */
+        .activity-item {
+            border-left: 4px solid #2563eb;
+            padding-left: 1rem;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-room {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #111827;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .activity-action {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .classroom-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    <div class="logo-text">
+                        <h1>Admin Dashboard</h1>
+                        <p>Classroom Management & Control</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span>⚙️</span>
+                        <span>Administrator</span>
+                    </div>
+                    <a href="index.html" class="btn">
+                        ← Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Overview Cards -->
+        <div class="overview">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Classrooms</div>
+                    <div>📊</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-value" id="totalRooms">3</div>
+                    <div class="card-description">Managed classrooms</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Currently Occupied</div>
+                    <div>👥</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-value" style="color: #dc2626;" id="occupiedRooms">2</div>
+                    <div class="card-description">Active sessions</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Currently Vacant</div>
+                    <div style="width: 1rem; height: 1rem; background: #16a34a; border-radius: 50%;"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-value" style="color: #16a34a;" id="vacantRooms">1</div>
+                    <div class="card-description">Available rooms</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Capacity</div>
+                    <div>📈</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-value" style="color: #9333ea;" id="totalCapacity">170</div>
+                    <div class="card-description">Available seats</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Classroom Management -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Classroom Management</h2>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        ➕ Add Classroom
+                    </button>
+                </div>
+                <div class="section-content" id="classroomList">
+                    <!-- Classrooms will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📈 Recent Activity Log</h2>
+                </div>
+                <div class="section-content" id="activityLog">
+                    <!-- Activity log will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Classroom Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Classroom</h3>
+            </div>
+            <form class="modal-form" onsubmit="addClassroom(event)">
+                <div class="form-group">
+                    <label class="label">Room ID</label>
+                    <input class="input" id="newRoomId" type="text" placeholder="e.g., CS102" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Room Name</label>
+                    <input class="input" id="newRoomName" type="text" placeholder="e.g., Computer Science Lab 2" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Capacity</label>
+                    <input class="input" id="newCapacity" type="number" placeholder="e.g., 30" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Building</label>
+                    <input class="input" id="newBuilding" type="text" placeholder="e.g., Engineering Block" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Floor</label>
+                    <input class="input" id="newFloor" type="number" placeholder="e.g., 1" required>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Add Classroom</button>
+                    <button type="button" class="btn" onclick="closeModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let classrooms = [];
+
+        fetch('/api/rooms')
+        .then(res => res.json())
+        .then(data => {
+            classrooms = data.map(room => ({
+            id: room.name, // using name as fallback ID
+            name: room.name,
+            capacity: room.capacity,
+            currentOccupancy: room.status.toLowerCase() === 'occupied' ? Math.floor(room.capacity * 0.6) : 0,
+            status: room.status.toLowerCase(),
+            building: "Main Block",  // or fetch from DB if available
+            floor: 1,
+            lastUpdated: room.last_updated
+            }));
+
+            renderAll();
+        })
+        .catch(err => {
+            console.error("Error fetching classrooms:", err);
+          });
+
+        let activityLog = [
+        ];
+
+        function updateOverview() {
+            const occupied = classrooms.filter(room => room.status === 'occupied').length;
+            const vacant = classrooms.filter(room => room.status === 'vacant').length;
+            const totalCapacity = classrooms.reduce((sum, room) => sum + room.capacity, 0);
+
+            document.getElementById('totalRooms').textContent = classrooms.length;
+            document.getElementById('occupiedRooms').textContent = occupied;
+            document.getElementById('vacantRooms').textContent = vacant;
+            document.getElementById('totalCapacity').textContent = totalCapacity;
+        }
+function renderClassrooms() {
+    const container = document.getElementById('classroomList');
+    container.innerHTML = classrooms.map(classroom => `
+        <div class="classroom-item">
+            <div class="classroom-header">
+                <div class="classroom-info">
+                    <h3>${classroom.name}</h3>
+                    <p>${classroom.id}</p>
+                </div>
+                <span class="status-badge ${classroom.status}">${classroom.status.toUpperCase()}</span>
+            </div>
+
+            <div class="classroom-controls">
+                <div class="form-group">
+                    <label class="label">Current Occupancy</label>
+                    <input class="input" type="number" min="0" max="${classroom.capacity}" 
+                           value="${classroom.currentOccupancy}" 
+                           onchange="updateOccupancy('${classroom.id}', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="label">Manual Status Override</label>
+                    <select class="select" onchange="updateStatus('${classroom.id}', this.value)">
+                        <option value="vacant" ${classroom.status === 'vacant' ? 'selected' : ''}>Vacant</option>
+                        <option value="occupied" ${classroom.status === 'occupied' ? 'selected' : ''}>Occupied</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="classroom-footer">
+                <span>Capacity: ${classroom.capacity} | Location: ${classroom.building}, Floor ${classroom.floor}</span>
+                <button class="btn btn-sm btn-danger" onclick="removeClassroom('${classroom.id}')">
+                    🗑
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+        function renderActivityLog() {
+            const container = document.getElementById('activityLog');
+            container.innerHTML = activityLog.map(log => `
+                <div class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-room">${log.classroom}</span>
+                        <span class="activity-time">${log.timestamp}</span>
+                    </div>
+                    <div class="activity-action">
+                        <strong>${log.action}</strong> by ${log.user}
+                    </div>
+                    <div class="activity-details">${log.details}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateOccupancy(roomId, occupancy) {
+            const room = classrooms.find(r => r.id === roomId);
+            if (room) {
+                room.currentOccupancy = parseInt(occupancy);
+                room.status = occupancy > 0 ? 'occupied' : 'vacant';
+                room.lastUpdated = "Just now";
+                
+                addActivity(roomId, "Occupancy Updated", "Admin", `Occupancy set to ${occupancy}`);
+                renderAll();
+            }
+        }
+
+        function updateStatus(roomId, status) {
+            const room = classrooms.find(r => r.id === roomId);
+            if (room) {
+                room.status = status;
+                if (status === 'vacant') room.currentOccupancy = 0;
+                room.lastUpdated = "Just now";
+                
+                addActivity(roomId, "Status Updated", "Admin", `Manually set to ${status}`);
+                renderAll();
+            }
+        }
+
+        function removeClassroom(roomId) {
+            if (confirm('Are you sure you want to remove this classroom?')) {
+                classrooms = classrooms.filter(r => r.id !== roomId);
+                addActivity(roomId, "Classroom Removed", "Admin", "Classroom removed from system");
+                renderAll();
+            }
+        }
+
+        function addActivity(classroom, action, user, details) {
+            const newActivity = {
+                id: Date.now().toString(),
+                timestamp: new Date().toLocaleString(),
+                classroom,
+                action,
+                user,
+                details
+            };
+            activityLog.unshift(newActivity);
+            if (activityLog.length > 10) activityLog.pop(); // Keep only latest 10
+        }
+
+        function openModal() {
+            document.getElementById('addModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('show');
+            document.getElementById('newRoomId').value = '';
+            document.getElementById('newRoomName').value = '';
+            document.getElementById('newCapacity').value = '';
+            document.getElementById('newBuilding').value = '';
+            document.getElementById('newFloor').value = '';
+        }
+
+        function addClassroom(event) {
+        event.preventDefault();
+
+        const newClassroom = {
+            id: document.getElementById('newRoomId').value,
+            name: document.getElementById('newRoomName').value,
+            capacity: parseInt(document.getElementById('newCapacity').value),
+            building: document.getElementById('newBuilding').value,
+            floor: parseInt(document.getElementById('newFloor').value)
+        };
+
+        fetch('/api/add-classroom', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newClassroom)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            closeModal();
+            location.reload(); // Refresh to show the new classroom
+        })
+        .catch(err => {
+            alert("Error adding classroom");
+            console.error(err);
+        });
+        }
+
+        function renderAll() {
+            updateOverview();
+            renderClassrooms();
+            renderActivityLog();
+        }
+
+        function sendManualStatus(roomName, status) {
+    fetch('/api/manual-update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ room_name: roomName, status: status })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        location.reload(); // Refresh the page to reflect the update
+    })
+    .catch(err => console.error("Error updating status:", err));
+}
+
+// Initial render
+renderAll();
+
+        // Initial render
+        renderAll();
+
+        // Close modal when clicking outside
+        document.getElementById('addModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
